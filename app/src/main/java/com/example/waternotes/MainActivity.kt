@@ -30,6 +30,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvResumoSemanal: TextView
     private lateinit var btnSair: ImageButton
 
+    // Views do Gráfico Semanal
+    private lateinit var tvValDay1: TextView
+    private lateinit var tvValDay2: TextView
+    private lateinit var tvValDay3: TextView
+    private lateinit var tvValDay4: TextView
+    private lateinit var tvValDay5: TextView
+    private lateinit var tvValDay6: TextView
+    private lateinit var tvValDay7: TextView
+
+    private lateinit var viewFillDay1: View
+    private lateinit var viewFillDay2: View
+    private lateinit var viewFillDay3: View
+    private lateinit var viewFillDay4: View
+    private lateinit var viewFillDay5: View
+    private lateinit var viewFillDay6: View
+    private lateinit var viewFillDay7: View
+
+    private lateinit var tvLabelDay1: TextView
+    private lateinit var tvLabelDay2: TextView
+    private lateinit var tvLabelDay3: TextView
+    private lateinit var tvLabelDay4: TextView
+    private lateinit var tvLabelDay5: TextView
+    private lateinit var tvLabelDay6: TextView
+    private lateinit var tvLabelDay7: TextView
+
     // Banco de dados e Sessão
     private lateinit var dbHelper: DatabaseHelper
     private var usuarioId: Int = -1
@@ -90,6 +115,31 @@ class MainActivity : AppCompatActivity() {
         btnAgua500 = findViewById(R.id.btnAgua500)
         tvResumoSemanal = findViewById(R.id.tvResumoSemanal)
         btnSair = findViewById(R.id.btnSair)
+
+        // Inicializa as views do Gráfico Semanal
+        tvValDay1 = findViewById(R.id.tvValDay1)
+        tvValDay2 = findViewById(R.id.tvValDay2)
+        tvValDay3 = findViewById(R.id.tvValDay3)
+        tvValDay4 = findViewById(R.id.tvValDay4)
+        tvValDay5 = findViewById(R.id.tvValDay5)
+        tvValDay6 = findViewById(R.id.tvValDay6)
+        tvValDay7 = findViewById(R.id.tvValDay7)
+
+        viewFillDay1 = findViewById(R.id.viewFillDay1)
+        viewFillDay2 = findViewById(R.id.viewFillDay2)
+        viewFillDay3 = findViewById(R.id.viewFillDay3)
+        viewFillDay4 = findViewById(R.id.viewFillDay4)
+        viewFillDay5 = findViewById(R.id.viewFillDay5)
+        viewFillDay6 = findViewById(R.id.viewFillDay6)
+        viewFillDay7 = findViewById(R.id.viewFillDay7)
+
+        tvLabelDay1 = findViewById(R.id.tvLabelDay1)
+        tvLabelDay2 = findViewById(R.id.tvLabelDay2)
+        tvLabelDay3 = findViewById(R.id.tvLabelDay3)
+        tvLabelDay4 = findViewById(R.id.tvLabelDay4)
+        tvLabelDay5 = findViewById(R.id.tvLabelDay5)
+        tvLabelDay6 = findViewById(R.id.tvLabelDay6)
+        tvLabelDay7 = findViewById(R.id.tvLabelDay7)
     }
 
     /**
@@ -144,6 +194,73 @@ class MainActivity : AppCompatActivity() {
         
         // Define o texto na seção do resumo semanal
         tvResumoSemanal.text = "Total bebido nos últimos 7 dias: ${totalSemanaMl} ml"
+
+        // Atualiza o gráfico semanal de forma dinâmica
+        atualizarGraficoSemanal()
+    }
+
+    /**
+     * Atualiza o gráfico semanal de consumo de água de forma dinâmica.
+     */
+    private fun atualizarGraficoSemanal() {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendar = java.util.Calendar.getInstance()
+
+        // Criamos uma lista de pares contendo a data (String) e o dia da semana formatado (S, T, Q, Q, S, S, D)
+        val diasSemana = ArrayList<Pair<String, String>>()
+
+        // Adiciona os dias de trás para frente (do mais antigo ao mais recente/hoje)
+        calendar.add(java.util.Calendar.DAY_OF_YEAR, -6)
+        for (i in 0 until 7) {
+            val dateStr = format.format(calendar.time)
+            
+            // Mapeia o dia da semana de forma robusta
+            val label = when (calendar.get(java.util.Calendar.DAY_OF_WEEK)) {
+                java.util.Calendar.SUNDAY -> "D"
+                java.util.Calendar.MONDAY -> "S"
+                java.util.Calendar.TUESDAY -> "T"
+                java.util.Calendar.WEDNESDAY -> "Q"
+                java.util.Calendar.THURSDAY -> "Q"
+                java.util.Calendar.FRIDAY -> "S"
+                java.util.Calendar.SATURDAY -> "S"
+                else -> "-"
+            }
+            
+            diasSemana.add(Pair(dateStr, label))
+            calendar.add(java.util.Calendar.DAY_OF_YEAR, 1) // Avança para o próximo dia
+        }
+
+        // Listas das views para iteração simples
+        val tvValores = listOf(tvValDay1, tvValDay2, tvValDay3, tvValDay4, tvValDay5, tvValDay6, tvValDay7)
+        val viewFills = listOf(viewFillDay1, viewFillDay2, viewFillDay3, viewFillDay4, viewFillDay5, viewFillDay6, viewFillDay7)
+        val tvLabels = listOf(tvLabelDay1, tvLabelDay2, tvLabelDay3, tvLabelDay4, tvLabelDay5, tvLabelDay6, tvLabelDay7)
+
+        val density = resources.displayMetrics.density
+        val maxHeightPx = (80 * density).toInt() // Altura do FrameLayout definida no XML (80dp)
+
+        val maxBase = if (metaDiariaMl > 0) metaDiariaMl.toDouble() else 2000.0
+
+        for (idx in 0 until 7) {
+            val dia = diasSemana[idx]
+            val qtd = dbHelper.buscarAguaDoDia(usuarioId, dia.first)
+
+            // Atualiza os textos
+            tvValores[idx].text = qtd.toString()
+            tvLabels[idx].text = dia.second
+
+            // Se for o dia de hoje, destaca a cor do texto do dia para facilitar a leitura
+            if (idx == 6) {
+                tvLabels[idx].setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.blue_primary))
+            } else {
+                tvLabels[idx].setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_dark))
+            }
+
+            // Calcula o preenchimento da barra
+            val percent = Math.min(1.0, qtd.toDouble() / maxBase)
+            val params = viewFills[idx].layoutParams
+            params.height = (maxHeightPx * percent).toInt()
+            viewFills[idx].layoutParams = params
+        }
     }
 
     /**

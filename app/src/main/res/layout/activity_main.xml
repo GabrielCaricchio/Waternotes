@@ -58,6 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -65,6 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:padding="20dp">
 
             <!-- Card de Progresso Diário -->
@@ -204,47 +208,337 @@
 
             </LinearLayout>
 
-            <!-- Card de Resumo Semanal -->
+            <!-- Card de Resumo Semanal com Gráfico Dinâmico -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_card_white"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:elevation="6dp"
                 android:padding="20dp"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📊"
-                    android:textSize="36sp"
-                    android:layout_marginEnd="16dp" />
+                    android:text="Histórico dos Últimos 7 Dias"
+                    android:textColor="@color/text_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
+                <!-- O Container do Gráfico: 7 colunas (uma para cada dia) -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="140dp"
+                    android:orientation="horizontal"
+                    android:gravity="bottom"
+                    android:layout_marginBottom="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Histórico da Semana"
-                        android:textColor="@color/text_dark"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="4dp" />
+                    <!-- Dia 1 (Mais antigo) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
 
-                    <TextView
-                        android:id="@+id/tvResumoSemanal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Total bebido nos últimos 7 dias: 0 ml"
-                        android:textColor="@color/text_light"
-                        android:textSize="14sp" />
+                        <TextView
+                            android:id="@+id/tvValDay1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay1"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 2 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay2"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 3 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay3"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 4 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay4"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 5 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay5"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 6 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay6"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <!-- Dia 7 (Hoje - Mais recente) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/tvValDay7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="9sp"
+                            android:textColor="@color/text_light"
+                            android:layout_marginBottom="4dp" />
+
+                        <FrameLayout
+                            android:layout_width="14dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_chart_bar_track">
+
+                            <View
+                                android:id="@+id/viewFillDay7"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_gravity="bottom"
+                                android:background="@drawable/bg_chart_bar_fill" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvLabelDay7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_dark"
+                            android:textStyle="bold"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvResumoSemanal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total bebido nos últimos 7 dias: 0 ml"
+                    android:textColor="@color/text_light"
+                    android:textSize="14sp"
+                    android:gravity="center" />
             </LinearLayout>
 
         </LinearLayout>
